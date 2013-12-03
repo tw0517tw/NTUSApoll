@@ -1,0 +1,48 @@
+for(i=0;i<10;i++){db.scores.save({a:i,exam:5})}
+
+scores是一張表
+db.scores.find() and it
+=> find()一次只會列出10項
+
+How about finding all documents where a == 2:
+  db.scores.find({a: 2}); 
+
+Or what about documents where a > 15?
+  db.scores.find({a: {'$gt': 15}}); 
+  
+Query Operators:
+  $gt is one of many special query operators. Here are few others:
+  $lt  - '<',   $lte - '<=', 
+  $gte - '>=',  $ne  - '!='
+  $in - 'is in array',  $nin - '! in array'
+ 
+
+UPDATES: 
+  Now create a couple documents like these for updating:
+  db.users.save({name: 'Johnny', languages: ['ruby', 'c']}); 
+  db.users.save({name: 'Sue', languages: ['scala', 'lisp']}); 
+  
+  {   "name" : "Johnny",   "_id" : {   "$oid" : "527f430ccc9374393403c095"   },   "languages" : [   "ruby",   "c" ]   },
+  {   "name" : "Sue",   "_id" : {   "$oid" : "527f431bcc9374393403c096"   },   "languages" : [   "scala",   "lisp" ]   }
+  
+Make sure they were saved by called db.users.find()
+Update the first document like so:
+  db.users.update({name: 'Johnny'}, {name: 'Cash', languages: ['english']});
+  
+  {   "name" : "Cash",   "_id" : {   "$oid" : "527f430ccc9374393403c095"   },   "languages" : [   "english" ]   },
+  {   "name" : "Sue",   "_id" : {   "$oid" : "527f431bcc9374393403c096"   },   "languages" : [   "scala",   "lisp" ]   }
+  
+ 8. Update Operators
+The previous update replaced the entire document, but MongoDB also
+supports partial updates to documents. For example, you can set a value:
+  db.users.update({name: 'Cash'}, {'$set': {'age': 50} }); 
+You can also push and pull items from arrays:
+  db.users.update({name: 'Sue'}, {'$pull': {'languages': 'scala'} }); 
+  db.users.update({name: 'Sue'}, {'$push': {'languages': 'ruby'} }); 
+Give these a try, check the results, and then enter 'next'.
+
+9. Deleting data
+To delete matching documents only, add a query selector to the remove method:
+  db.users.remove({name: 'Sue'});
+To delete everything from a collection:
+  db.scores.remove();

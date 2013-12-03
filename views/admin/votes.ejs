@@ -1,0 +1,19 @@
+<script type="text/javascript" src="/js/admin_vote.js"></script>
+<h1>投票管理</h1>
+<div class="btn btn-primary" onclick="showVoteForm()">新增投票項目</div>
+<br><br>
+<div class="votes">
+	
+</div>
+<script>
+	var votes = new VoteCollection([{chiname:"電機",engname:"CCEE"},{chiname:"資工",engname:"CSIE"}]);
+	var votes_view = new VoteCollectionView({
+	  collection : votes,
+	  el : $('div.votes')[0]
+	});
+	$().ready(function(){
+		//votes_view.render();
+		votes_view.update();
+	});
+</script>	
+<% include vote_modals  %>

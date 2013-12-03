@@ -1,0 +1,45 @@
+/*input[type=text], .ui-input-text{
+	border-radius: 0px !important;
+	max-width: 250px;
+	display: inline-block;
+}*/
+
+body, html{
+	height: 100%;
+}
+.super-container > .container{
+	height: 100%;
+	-webkit-transition: margin-top 2s;
+	-moz-transition: margin-top 2s;
+	-ms-transition: margin-top 2s;
+	-o-transition: margin-top 2s;
+	transition: margin-top 2s;
+}
+
+.super-container{
+}
+
+.super-super-container{
+	height: 100%;
+	overflow: hidden;
+}
+
+.vote_block{
+	padding: 8px;
+	border-radius: 5px;
+	background: #EFEFEF;
+	margin-bottom: 5px;
+}
+
+span.vote_rate{
+	display: block;
+	margin-bottom: -1.5em;
+	margin-left: 5px;
+	color: white;
+	text-shadow: 0 0 5px #000;
+}
+div.vote_rate{
+	display: block;
+	margin-top: 5px;
+	margin-bottom: -15px;
+}

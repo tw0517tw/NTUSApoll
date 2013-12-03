@@ -1,0 +1,95 @@
+<% if(vote){%>
+<div id="candidate_modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">新增候選人</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="pull-left" style="width: 140px;">
+            <img id="avatar" src="" style="width:120px;" onerror="this.src='error';" />
+            <form method="post" action="/admin/upload" enctype="multipart/form-data">
+              <input type="hidden" name="_id" id="object_id_img" value="test" />
+              <input type="file" name="displayImage" />
+              <input type="submit" />
+            </form>
+          </div>
+          <div class="pull-left" style="margin-left: 15px">
+            <label for="no">編號</label><br>
+            <input type="text" name="no" id="no"><br>
+            <label for="cname">中文名稱</label><br>
+            <input type="text" name="cname" id="cname"><br>
+            <label for="ename">英文名稱</label><br>
+            <input type="text" name="ename" id="ename"><br>
+            <input type="hidden" name="_id" id="object_id"/>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" onclick="addCandidate()">儲存變更</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="token_modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">產生投票亂碼</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          <label for="tokens">亂碼數量</label><br>
+          <input type="number" value="80" name="tokens" id="tokens">
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+        <a href="/admin/class/<%=vote._id%>/tokens/gen?number=80" target="_blank" class="btn btn-primary">產生</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<% } %>
+<div id="vote_modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <% if(vote){ %>
+          修改投票內容
+          <% }else{ %>
+          新增投票
+          <% } %>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          <form action="">
+            <label for="chiname">中文名稱</label><br>
+            <input type="text" name="chiname" id="chiname"><br>
+            <label for="engname">英文名稱</label><br>
+            <input type="text" name="engname" id="engname"><br>
+            <label for="start_at">起始日期</label><br>
+            <input type="date" name="start_at" id="start_at" /><br>
+            <label for="end_at">結束日期</label><br>
+            <input type="date" name="end_at" id="end_at"/><br>
+            <label for="votemax">複選張數</label><br>
+            <input type="number" name="votemax" id="votemax">
+            <input type="hidden" name="_id" id="_id" />
+          </form>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" onclick="editVote()">儲存變更</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

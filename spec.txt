@@ -1,0 +1,12 @@
+/token/:name/write?number=130210414
+=> write random tokens to the "name" class
+=> respond ok!
+
+/token/validate?random_number=0.241327583
+=> query ramdom number to see its class name and validation
+=> respond JSON.stringify({name:data['name'],validate:data['validate']})
+
+search for vote cname class entries retrun cname ename _id
+generate random token?
+add constructing time 
+add updating time
