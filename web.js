@@ -230,7 +230,7 @@ app.get('/admin/class/:classid/tokens/gen',function(request,response){	//?classi
 	tokens_generated = [];
 	vote_class.findOne({_id: new ObjectID(classid)}, function(err, vote){
 		if(!vote) return response.end('{error:"Class not found"}');
-		if(!vote.serial) vote_class.update({_id:vote._id}, {'$set': {serial: 1}});
+		if(!vote.serial) vote_class.update({_id:vote._id}, {'$set': {serial: 1}}, function(eerr,ddoc){});
 		else vote_class.update({_id:vote._id}, {'$inc': {serial: 1}}, function(eerr,ddoc){});
 		var insert_i = 0;
 		for(var i_token=0;i_token<random_number;i_token++){
