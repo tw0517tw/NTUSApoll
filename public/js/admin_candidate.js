@@ -17,7 +17,7 @@ var Candidate = Backbone.Model.extend({
     if(this.attributes._id&&this.attributes._id!="")
   	 $.getJSON('/admin/candy/update?_id='+this.attributes._id+'&cname='+this.attributes.cname+'&ename='+this.attributes.ename+'&no='+this.attributes.no,this.update_data);
     else
-     $.getJSON('/admin/candy/add?cname='+this.attributes.cname+'&ename='+this.attributes.ename+'&classid='+vid+'&no='+this.attributes.no,this.update_data);
+     $.getJSON('/admin/candy/add?cname='+this.attributes.cname+'&ename='+this.attributes.ename+'&classid='+the_vote._id+'&no='+this.attributes.no,this.update_data);
   },
   calc_rate: function(){
     total_vote = 0;
@@ -74,14 +74,7 @@ var CandidateView = Backbone.View.extend({
   	$.getJSON('/admin/candy/remove?_id='+this.model.attributes._id);
   },
   edit: function(){
-    showCandidateForm();
-    $('#avatar').attr('src',"/avatar/" + this.model.attributes._id+".jpg");
-    $('#cname').val(this.model.attributes.cname);
-    $('#ename').val(this.model.attributes.ename);
-    $('#no').val(this.model.attributes.no);
-    $('#object_id_img').val(this.model.attributes._id);
-    $('#object_id').val(this.model.attributes._id);
-    //$(this.el).fadeOut();
+    showCandidateForm(this.model);
   }
 });
 
@@ -133,8 +126,24 @@ var CandidateCollectionView = Backbone.View.extend({
   }
 });
 
-function showCandidateForm(){
+function showCandidateForm(model){
 	$('#candidate_modal').modal('show');
+  if(model){
+    $('#candy_img').fadeIn();
+    $('#avatar').attr('src',"/avatar/" + model.attributes._id+".jpg");
+    $('#cname').val(model.attributes.cname);
+    $('#ename').val(model.attributes.ename);
+    $('#no').val(model.attributes.no);
+    $('#object_id_img').val(model.attributes._id);
+    $('#object_id').val(model.attributes._id);
+  }else{
+    $('#candy_img').fadeOut();
+    $('#object_id').val('');
+    $('#object_id_img').val('');
+    $('#cname').val('');
+    $('#ename').val('');
+    $('#no').val('');
+  }
 }
 
 function addCandidate(){
@@ -145,7 +154,6 @@ function addCandidate(){
     for(var i in candidates_view.collection.models){
       //console.log(candidates_view.collection.models[i].attributes['_id'],v._id);
       if(candidates_view.collection.models[i].attributes['_id']==vid){
-        console.log("found");
         candidates_view.collection.models[i].set(v.attributes);
       }
     }

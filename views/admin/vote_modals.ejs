@@ -1,3 +1,6 @@
+<script type="text/javascript" src="/js/jquery.simple-dtpicker.js"></script>
+<link type="text/css" href="/css/jquery.simple-dtpicker.css" rel="stylesheet" />
+
 <% if(vote){%>
 <div id="candidate_modal" class="modal fade">
   <div class="modal-dialog">
@@ -8,7 +11,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <div class="pull-left" style="width: 140px;">
+          <div class="pull-left" style="width: 140px;" id="candy_img">
             <img id="avatar" src="" style="width:120px;" onerror="this.src='error';" />
             <form method="post" action="/admin/upload" enctype="multipart/form-data">
               <input type="hidden" name="_id" id="object_id_img" value="test" />
@@ -77,9 +80,9 @@
             <label for="engname">英文名稱</label><br>
             <input type="text" name="engname" id="engname"><br>
             <label for="start_at">起始日期</label><br>
-            <input type="date" name="start_at" id="start_at" /><br>
+            <input type="text" name="start_at" id="start_at" /><br>
             <label for="end_at">結束日期</label><br>
-            <input type="date" name="end_at" id="end_at"/><br>
+            <input type="text" name="end_at" id="end_at"/><br>
             <label for="votemax">複選張數</label><br>
             <input type="number" name="votemax" id="votemax">
             <input type="hidden" name="_id" id="_id" />
@@ -93,3 +96,8 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<script>
+  $('#start_at').appendDtpicker();
+  $('#end_at').appendDtpicker();
+</script>

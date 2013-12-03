@@ -8,8 +8,7 @@ var Vote = Backbone.Model.extend({
   },
   save: function(){
   	that = this;
-  	$.getJSON('/admin/class/add?chiname='   +this.attributes.chiname
-  								+'&engname='+this.attributes.engname,this.update_data);
+  	$.getJSON('/admin/class/add?'+$('#vote_modal form').serialize(),this.update_data);
   },
   update_data: function(data){
   	console.log(data[0]);

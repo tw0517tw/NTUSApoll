@@ -12,9 +12,22 @@ module.exports.ipIsAllowed = function(request, response){
 	}
 	return true;
 }
+
+module.exports.dateToFormat = function(date) {
+	if(!date) date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    var y = date.getFullYear();
+    var h = date.getHours();
+    var mm = date.getMinutes();
+    return '' + y + '-' + (m<=9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d) + ' '
+    + (h <= 9 ? '0' + h : h) +':'+(mm <= 9 ? '0' + mm : mm) ;
+}
+
 module.exports.errorObj = function(msg){
 	return JSON.stringify({error:msg});
 }
+
 module.exports.updateObject= function(raw, replace, replacing){
 	for(var i in raw){
 		if(i=='_id') replace[i] = new ObjectID(replace[i]);

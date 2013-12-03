@@ -27,6 +27,14 @@ function init(scope){
 			res.render('admin.ejs',{section:"vote", vote: doc});
 		});
 	})
+	app.get('/analytics', function(req,res){
+		dbc['candidates'].aggregate([{$project:{ _id:0, vote: "$vote"}},
+									{$group:{ _id:"", vote: {$sum: "$vote"}}}], 
+									function(err,result){
+										console.log(err,result);
+										res.end(JSON.stringify(result));	
+									});
+	});
 	if(scope['clearDB']){
 		setTimeout(function(){
 		for(var i in dbc){

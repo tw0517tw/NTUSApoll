@@ -15,8 +15,7 @@ var express = require('express');
 var app = express();
 var util = require('./util.js')
 var fs = require('fs');
-var removeCallback = function(err,result){}
-var updateCallback = function(err,result){}
+
 app.configure(function(){
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
@@ -30,14 +29,10 @@ app.configure(function(){
 	app.use(express.static(__dirname + '/public'));
 });
 
-var tokens;
-var KEY;
-var CANDY;
-
 mongodb.connect(mongoUri, function (err, ddb) {
-	db = ddb;
-	console.log("Database ready.", err);
-	db.collection('contact', function(err, collection) {
+  db = ddb;
+  console.log("Database ready.", err);
+  db.collection('contact', function(err, collection) {
 		tokens = collection;
 		//collection.remove();
 		dbc['tokens'] = collection;
@@ -103,20 +98,7 @@ app.get('/admin/candy/update',function(request,response){	//?_id =XXX & ename = 
 /* Candidate.Remove */
 app.get('/admin/candy/remove',function(request,response){	//?_id = XXX
 	if(util.accessDenied(request,response))	return;
-
-	var path = __dirname + "/public/avatar/" + request.query._id + ".jpg";
-	//console.log(""+docs[ff]['id']);
-	try
-	{
-		fs.unlinkSync(path);
-	}
-	catch(err)
-	{
-		console.log(err);
-	}
-	//console.log("remove "+docs['ename']);
-
-	CANDY.remove({_id:new ObjectID(request.query._id)},removeCallback);
+	CANDY.remove({_id:new ObjectID(request.query._id)},1);
 	response.end('{success:true}');	
 	
 })
@@ -130,12 +112,12 @@ app.get('/admin/candy/add',function(request,response){	//?ename = XXX & cname = 
 	var pic = request.query.pic;
 	var id = request.query.classid;
 	//var s
-	data = CANDY.findOne({ename:ename,cname:cname, classid: id},function(err,data){
+	data = CANDY.findOne({ename:ename,cname:cname},function(err,data){
 		if(data){
 			response.end("{error:'already exists'}");
 		}
 		else{
-			CANDY.insert({ename: ename,cname:cname,no:request.query.no,pic:pic,vote:0,classid:id},function(err,data){
+			CANDY.insert({ename: ename,cname:cname, no: request.query.no,pic:pic,vote:0,classid:id},function(err,data){
 				if(data){
 					console.log("inserted")
 					response.end(JSON.stringify(data));
@@ -173,41 +155,29 @@ app.get('/admin/candy/all',function(request,response){
 
 app.get('/admin/class/remove',function(request,response){	//?_id = XXX 還沒清大頭貼檔案
 	if(util.accessDenied(request,response))	return;
-	var classid_query = {classid:request.query._id};
-	console.log(classid_query);
-	dbc['tokens'].remove(classid_query,removeCallback);
-	CANDY.find(classid_query).toArray(function(err,docs){
-		console.log("this is the removed list: ",docs);
-		for(var ff in docs){
+
+	tokens.remove({classid:request.query._id},0);
+	/*CANDY.find({classid: request.query._id}).toArray(function(err,docs){
+		console.log("this is the removed list: "+docs);
+		for(var ff=1;ff<=docs.length;ff++){
 			var path = __dirname + "/public/avatar/" + docs[ff]['_id'] + ".jpg";
 			console.log(""+docs[ff]['id']);
-			try
-			{
-				fs.unlinkSync(path);
-			}
-			catch(err)
-			{
-				console.log(err);
-			}
+			fs.unlinkSync(path);
 			console.log("remove "+docs['ename']);
-			CANDY.remove({_id:docs[ff]._id},removeCallback);
 		}
+		CANDY.remove({classid: request.query._id},0);
 	});
-	vote_class.remove({_id: new ObjectID(request.query._id)},removeCallback);
-	response.end('Removed');
+	
+	vote_class.remove({_id: new ObjectID(request.query._id)},0);
+	response.end('Removed');*/
 })
 
 app.post('/admin/class/update',function(request,response){	//?_id =XXX & engname = XXX,& chiname = OOO & start 2013/01/01 & end 2013/12/31
 	if(util.accessDenied(request,response))	return;
 	/* {engname, chiname, _id, start_at, end_at, created_at} */
-	request.body.start_at = new Date(request.body.start_at);
-	request.body.end_at = new Date(request.body.end_at);
-	
 	var data = vote_class.findOne({_id: new ObjectID(request.body._id)},function(err,data){
 		util.updateObject(data,request.body, true);
-		data.start_at = util.dateToFormat(data.start_at);
-		data.end_at = util.dateToFormat(data.end_at);
-		vote_class.update({_id:data._id}, data, updateCallback);
+		vote_class.update({_id:data._id}, data);
 		response.end(JSON.stringify(data));
 	});	
 })
@@ -231,16 +201,14 @@ app.get('/admin/class/add',function(request,response){	//?engname = XXX & chinam
 	if(util.accessDenied(request,response))	return;
 	var classname = request.query.engname;
 	var chiname = request.query.chiname;
-	var start = request.query.start_at? new Date(request.query.start_at) : new Date();
-	var end = request.query.end_at? new Date(request.query.end_at) : new Date();
+	var start = new Date(request.query.start);
+	var end = new Date(request.query.end);
 	var addtime = new Date();
 	var votemax = (request.query.votemax) ? request.query.votemax : 1;
-	start = util.dateToFormat(start);
-	end = util.dateToFormat(end);
 
 	data = vote_class.findOne({engname:classname,chiname:chiname},function(err,data){
 		if(data){
-			response.end(util.errorObj("already exists"));
+			response.end("already exists");
 		}
 		else{
 			vote_class.insert({engname:classname,chiname:chiname,construct_time:addtime,start_at:start,end_at:end,votemax:votemax},function(err,data){
@@ -249,7 +217,7 @@ app.get('/admin/class/add',function(request,response){	//?engname = XXX & chinam
 					response.end(JSON.stringify(data));
 				}
 				else
-					response.end(util.errorObj(err))
+					console.log("err")
 			})
 
 		}
