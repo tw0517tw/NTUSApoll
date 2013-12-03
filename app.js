@@ -1,7 +1,11 @@
 var mongodb = require('mongodb');
 var cookieStore = require('cookie-sessions');
-var mongodbServer = new mongodb.Server('localhost', 27017, { auto_reconnect: true, poolSize: 10 });
-var db = new mongodb.Db('mydb', mongodbServer);
+var mongodbServer;
+var mongoUri = 'mongodb://localhost/mydb';
+if(true || process.env.NODE_ENV){	
+	"mongodb://ntusa3:​yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
+}
+var db;
 var ObjectID = require('mongodb').ObjectID;
 var dbc = {};
 var KEY = null;
@@ -23,9 +27,10 @@ app.configure(function(){
 	app.use(express.static(__dirname + '/public'));
 });
 
-db.open(function () {
-	console.log("db opened");
-	db.collection('contact', function(err, collection) {
+mongodb.connect(mongoUri, function (err, ddb) {
+  db = ddb;
+  console.log("Database ready.", err);
+  db.collection('contact', function(err, collection) {
 		tokens = collection;
 		//collection.remove();
 		dbc['tokens'] = collection;
@@ -48,9 +53,8 @@ db.open(function () {
 		dbc['votes'] = collection;
 		//collection.remove();
 		//console.log("dbaa sc",err);
-	})
+	});
 });
-
 
 app.post('/admin/login',function(request,response){	// /admin?key = XXX&id=XXX
 	if(!util.ipIsAllowed(request,response)) return;
@@ -144,10 +148,10 @@ app.get('/admin/candy/all',function(request,response){
 app.get('/admin/class/remove',function(request,response){	//?_id = XXX 還沒清大頭貼檔案
 	if(util.accessDenied(request,response))	return;
 
-	contact.remove({classid:request.query._id},1);
+	tokens.remove({classid:request.query._id},1);
 	CANDY.find({classid: request.query._id}).toArray(function(err,docs){
 		for(var i=0;i<docs.length;i++){
-			var path = __dirname + "/public/avator/" + docs[i]['_id'] + ".jpg";
+			var path = __dirname + "/public/avatar/" + docs[i]['_id'] + ".jpg";
 			fs.unlink(path,function(err){
 				console.log("remove "+docs['ename']);
 			});	
@@ -183,7 +187,7 @@ app.get('/admin/class/search',function(request,response){	//?cname=XXX
 })
 
 
-app.get('/admin/class/add',function(request,response){	//?engname = XXX & chiname = OOO & start 2013/01/01 & end 2013/12/31 & votemax
+app.get('/admin/class/add',function(request,response){	//?engname = XXX & chiname = OOO & start 2013/01/01 14:00:00 & end 2013/12/31 14:25:00 & votemax
 	if(util.accessDenied(request,response))	return;
 	var classname = request.query.engname;
 	var chiname = request.query.chiname;
@@ -226,9 +230,9 @@ app.get('/admin/class/:classid/tokens/gen',function(request,response){	//?classi
 	vote_class.findOne({_id: new ObjectID(classid)}, function(err, vote){
 		if(!vote) return response.end('{error:"Class not found"}');
 		if(!vote.serial) vote_class.update({_id:vote._id}, {'$set': {serial: 1}});
-		else vote_class.update({_id:vote._id}, {'$inc': {serial: 1}});
-		
-		for(var i=0;i<random_number;i++){
+		else vote_class.update({_id:vote._id}, {'$inc': {serial: 1}}, function(eerr,ddoc){});
+		var insert_i = 0;
+		for(var i_token=0;i_token<random_number;i_token++){
 			var a = Math.PI;
 			var rand = util.generateToken();
 			tokens_generated.push(rand);
@@ -238,11 +242,12 @@ app.get('/admin/class/:classid/tokens/gen',function(request,response){	//?classi
 				validate: true
 			}, function(err, data) {
 				if (data) {
-					console.log('Inserted #'+i +' token '+rand);
+					++insert_i;
+					console.log('Inserted #'+(insert_i) +' token '+tokens_generated[insert_i]);
 				} else {
-					response.end("{success: false}");
+					return response.end("{success: false}");
 				}
-				if(i==random_number-1){
+				if(insert_i==random_number-1){
 					//response.setHeader('Content-disposition', 'attachment; filename=token_'+Date.now()+'.txt');
 					result = "<b>"+vote.chiname + ' ' + vote.engname+"</b> 投票序號<br /><br />";
 					result += "生成時間: " + Date.now().toString()+"<br /><br />";
@@ -317,16 +322,21 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 		if(data['validate']==true){
 			data['validate'] = false;
 			tokens.save(data,function(err,doc){});
-			var time = new Date();
-			var endtime = new Date(data['end_at']);
-			if(endtime < time) return response.end("Too late");
+			console.log(candy);
 			
+
 			vote_class.findOne({_id:new ObjectID(data['classid'])},function(err,vote){
-				if(vote['end_at'] < time || time < vote['start_at']) return response.end("Too late");
-				for(var i=0;i<candy.length;i++)
+				var time = new Date();
+				var end_at = new Date(data['end_at']);
+				var start_at = new Date(data['start_at']);
+				
+				if(end_at < time || time < start_at) return response.end(util.errorObj("Too late"));
+				for(var i in candy){
 					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid:classid},function(err,data){
-						CANDY.update({'$inc':{'vote':1}},function(err,doc){});
-					})
+						console.log("Update "+ candy[i]);
+						CANDY.update({_id: data._id}, {'$inc':{vote:1}},function(err,doc){});
+					});
+				}
 				return response.end(JSON.stringify({success:true,data:data}));
 			});
 		}else{
