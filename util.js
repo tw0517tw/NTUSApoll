@@ -6,7 +6,7 @@ module.exports.ipIsAllowed = function(request, response){
 	var patt1=new RegExp("140.112."+".*");
 	console.log(request.ip);
 	var ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
-	if(!(ip=="127.0.0.1" || ip==patt1)){
+	if(!(ip=="127.0.0.1" || patt1.test(ip))){
 		response.end(module.exports.errorObj("IP "+ ip + " is not in the allowed net area"));
 		return false
 	}
