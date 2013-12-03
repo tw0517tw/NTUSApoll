@@ -32,7 +32,7 @@ var VoteView = Backbone.View.extend({
   		 <a href='/admin/vote/<%=_id%>' class='edit'>編輯</a> \
   		 <a href='#' class='delete'>刪除</a>"),
   initialize: function () {
-  	//this.model.bind('remove', this.remove);
+  	this.model.on('change', this.render, this);
   },
   render: function(){
     var attr = this.model.attributes;

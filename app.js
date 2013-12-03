@@ -1,10 +1,9 @@
 var mongodb = require('mongodb');
 var cookieStore = require('cookie-sessions');
 var mongodbServer;
-var mongoUri = 'mongodb://localhost/mydb';
-if(true || process.env.NODE_ENV){	
-	"mongodb://ntusa3:​yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
-}
+var mongoUri = process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+  'mongodb://localhost/mydb';
 var db;
 var ObjectID = require('mongodb').ObjectID;
 var dbc = {};
@@ -19,9 +18,7 @@ var fs = require('fs');
 app.configure(function(){
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
-	app.use(express.json());
-	app.use(express.multipart());
-	app.use(express.urlencoded());
+	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.cookieParser());
 	app.use(cookieStore({ secret: 'FredChien' }));
@@ -31,7 +28,6 @@ app.configure(function(){
 
 mongodb.connect(mongoUri, function (err, ddb) {
   db = ddb;
-  console.log("Database ready.", err);
   db.collection('contact', function(err, collection) {
 		tokens = collection;
 		//collection.remove();
@@ -154,9 +150,9 @@ app.get('/admin/class/remove',function(request,response){	//?_id = XXX 還沒清
 	CANDY.find({classid: request.query._id}).toArray(function(err,docs){
 		for(var i=0;i<docs.length;i++){
 			var path = __dirname + "/public/avatar/" + docs[i]['_id'] + ".jpg";
-			console.log(""+docs[i]['id']);
-			fs.unlinkSync(path);	
-			console.log("remove "+docs['ename']);
+			fs.unlink(path,function(err){
+				console.log("remove "+docs['ename']);
+			});	
 		}
 	});
 	CANDY.remove({classid: request.query._id},1);
