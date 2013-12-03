@@ -183,21 +183,21 @@ app.get('/admin/class/search',function(request,response){	//?cname=XXX
 })
 
 
-app.get('/admin/class/add',function(request,response){	//?engname = XXX & chiname = OOO & start 2013/01/01 & end 2013/12/31
+app.get('/admin/class/add',function(request,response){	//?engname = XXX & chiname = OOO & start 2013/01/01 & end 2013/12/31 & votemax
 	if(util.accessDenied(request,response))	return;
 	var classname = request.query.engname;
 	var chiname = request.query.chiname;
 	var start = new Date(request.query.start);
 	var end = new Date(request.query.end);
 	var addtime = new Date();
-
+	var votemax = (request.query.votemax) ? request.query.votemax : 1;
 
 	data = vote_class.findOne({engname:classname,chiname:chiname},function(err,data){
 		if(data){
 			response.end("already exists");
 		}
 		else{
-			vote_class.insert({engname:classname,chiname:chiname,construct_time:addtime,start_time:start,end_time:end},function(err,data){
+			vote_class.insert({engname:classname,chiname:chiname,construct_time:addtime,start_at:start,end_at:end,votemax:votemax},function(err,data){
 				if(data){
 					console.log("inserted")
 					response.end(JSON.stringify(data));
@@ -318,7 +318,9 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 			data['validate'] = false;
 			tokens.save(data,function(err,doc){});
 			var time = new Date();
-			//if(data['end_at'] > time) return response.end("Too late");
+			var endtime = new Date(data['end_at']);
+			if(endtime < time) return response.end("Too late");
+			
 			vote_class.findOne({_id:new ObjectID(data['classid'])},function(err,vote){
 				if(vote['end_at'] < time || time < vote['start_at']) return response.end("Too late");
 				for(var i=0;i<candy.length;i++)
