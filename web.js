@@ -2,8 +2,8 @@ var mongodb = require('mongodb');
 var cookieStore = require('cookie-sessions');
 var mongodbServer;
 var mongoUri = 'mongodb://localhost/mydb';
-if(true || process.env.NODE_ENV){	
-	mongoUri="mongodb://ntusa3:​yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
+if(process.env.NODE_ENV|| true){	
+	mongoUri="mongodb://ntusa3:yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
 }
 var db;
 var ObjectID = require('mongodb').ObjectID;
@@ -147,20 +147,20 @@ app.get('/admin/candy/all',function(request,response){
 })
 
 /* Class.Remove */ // ALTERED
-app.get('/remove',function(request,response){	//?name=XXX
+/*app.get('/remove',function(request,response){	//?name=XXX
 	var name = request.query.name;
 	var path = __dirname + "/public/avatar/" +name +".jpg"
 	fs.unlinkSync(path);
-})
+})*/
 
 app.get('/admin/class/remove',function(request,response){	//?_id = XXX 還沒清大頭貼檔案
 	if(util.accessDenied(request,response))	return;
 
 	tokens.remove({classid:request.query._id},1);
 	CANDY.find({classid: request.query._id}).toArray(function(err,docs){
-		for(var i=0;i<docs.length;i++){
-			var path = __dirname + "/public/avatar/" + docs[i]['_id'] + ".jpg";
-			console.log(""+docs[i]['id']);
+		for(var ff=0;ff<docs.length;ff++){
+			var path = __dirname + "/public/avatar/" + docs[ff]['_id'] + ".jpg";
+			console.log(""+docs[ff]['id']);
 			fs.unlinkSync(path);	
 			console.log("remove "+docs['ename']);
 		}
