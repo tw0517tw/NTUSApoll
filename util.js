@@ -5,8 +5,9 @@ for(var uu = 0; uu < 26; uu++) TokenChars[1].push(String.fromCharCode(uu+97));
 module.exports.ipIsAllowed = function(request, response){
 	var patt1=new RegExp("140.112."+".*");
 	console.log(request.ip);
-	if(!(request.ip=="127.0.0.1" || request.ip==patt1)){
-		response.end(module.exports.errorObj("IP "+ request.ip + " is not in the allowed net area"));
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	if(!(ip=="127.0.0.1" || ip==patt1)){
+		response.end(module.exports.errorObj("IP "+ ip + " is not in the allowed net area"));
 		return false
 	}
 	return true;
