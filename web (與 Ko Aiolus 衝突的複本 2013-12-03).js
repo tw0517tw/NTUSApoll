@@ -3,7 +3,7 @@ var cookieStore = require('cookie-sessions');
 var mongodbServer;
 var mongoUri = 'mongodb://localhost/mydb';
 if(true || process.env.NODE_ENV){	
-	mongoUri="mongodb://ntusa3:​yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
+	"mongodb://ntusa3:​yxul4dj4au4a83@paulo.mongohq.com:10058/app20024734";
 }
 var db;
 var ObjectID = require('mongodb').ObjectID;
@@ -20,9 +20,9 @@ app.configure(function(){
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'ejs');
 	app.use(express.json());
+	app.use(express.multipart());
 	app.use(express.urlencoded());
 	app.use(express.methodOverride());
-	app.use(express.multipart());
 	app.use(express.cookieParser());
 	app.use(cookieStore({ secret: 'FredChien' }));
 	app.use(app.router);
@@ -147,12 +147,6 @@ app.get('/admin/candy/all',function(request,response){
 })
 
 /* Class.Remove */ // ALTERED
-app.get('/remove',function(request,response){	//?name=XXX
-	var name = request.query.name;
-	var path = __dirname + "/public/avatar/" +name +".jpg"
-	fs.unlinkSync(path);
-})
-
 app.get('/admin/class/remove',function(request,response){	//?_id = XXX 還沒清大頭貼檔案
 	if(util.accessDenied(request,response))	return;
 
