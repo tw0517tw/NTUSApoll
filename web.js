@@ -374,7 +374,7 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 				 console.log("Null vote", vote, token_data, err);
 				 return response.end(util.errorObj("Vote "+token_data['classid']+" not found"));	
 				}
-				console.log("Try Vote ", candy_data);
+				console.log("Try Vote ", vote);
 				var time = new Date();
 				var end_at = new Date(vote['end_at']);
 				var start_at = new Date(vote['start_at']);
