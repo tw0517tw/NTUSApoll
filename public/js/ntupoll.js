@@ -2,7 +2,7 @@
 var voted = 0;
 var vote_data = [];
 function checkToken(){
-  $.getJSON('http://localhost:8080/token/validate?token='+$('#token').val(), function(data){
+  $.getJSON('/token/validate?token='+$('#token').val(), function(data){
     if(!data.error){
       $('#vote_title').text(data.vote_class.chiname);
       $('#vote_entitle').text(data.vote_class.engname);
