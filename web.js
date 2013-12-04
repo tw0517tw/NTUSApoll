@@ -135,7 +135,7 @@ app.get('/admin/candy/add',function(request,response){	//?ename = XXX & cname = 
 			response.end("{error:'already exists'}");
 		}
 		else{
-			CANDY.insert({ename: ename,cname:cname,no:request.query.no,pic:pic,vote:0,classid:id},function(err,data){
+			CANDY.insert({ename: ename,cname:cname,no:request.query.no,pic:pic,vote:0, dis_vote:0,classid:id},function(err,data){
 				if(data){
 					console.log("inserted")
 					response.end(JSON.stringify(data));
@@ -258,7 +258,7 @@ app.get('/admin/class/add',function(request,response){	//?engname = XXX & chinam
 
 app.get('/admin/class/all',function(request,response){	//?engname = XXX & chiname = OOO
 	if(util.accessDenied(request,response))	return;
-	vote_class.find({}).toArray(function(err,docs){
+	vote_class.find({}).sort({start_at:-1}).toArray(function(err,docs){
 		response.end(JSON.stringify(docs));
 	});	
 })
@@ -360,7 +360,7 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 
 	var token = request.query.token;
 	var candy = request.query.candy;
-	var dis_candy = result.query.dis_candy;
+	var dis_candy = request.query.dis_candy;
 
 	tokens.findOne({ token: token},function(err, token_data){
 		console.log(err,token_data);
@@ -374,19 +374,22 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 				var end_at = new Date(vote['end_at']);
 				var start_at = new Date(vote['start_at']);
 				if(end_at < time || time < start_at) return response.end(util.errorObj("Too late"));
-				if(candy.length > parseInt(vote.votemax?vote.votemax:1)) return response.end(util.errorObj("人數過多"));
-				if(dis_candy.length > 0 && !vote.agree) return response.end(util.errorObj("不開放不同意選項"));
+				if(candy.length > parseInt(vote.votemax?vote.votemax:1) && vote.agree!="on") return response.end(util.errorObj("人數過多"));
+				if(dis_candy.length > 0 && vote.agree!="on") return response.end(util.errorObj("不開放不同意選項"));
 				var classid = vote._id.toString();
+				var candy_repeat = [];
 				for(var i in candy){
-					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid: classid},function(err,token_data){
+					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid: classid},function(err,candy_data){
 						console.log("Update "+ candy[i]);
-						CANDY.update({_id: token_data._id}, {'$inc':{vote:1}},function(err,doc){});
+						if(candy_repeat[candy[i]]) return; 
+						candy_repeat[candy[i]] = true;
+						CANDY.update({_id: candy_data._id}, {'$inc':{vote:1}},function(err,doc){});
 					});
 				}
 				for(var i in dis_candy){
-					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid:classid},function(err,token_data){
-						console.log("Update "+ candy[i]);
-						CANDY.update({_id: token_data._id}, {'$inc':{vote:1}},function(err,doc){});
+					CANDY.findOne({_id: new ObjectID(dis_candy[i]) ,classid:classid},function(err,candy_data){
+						console.log("Update "+ dis_candy[i]);
+						CANDY.update({_id: candy_data._id}, {'$inc':{dis_vote:1}},function(err,doc){});
 					});
 				}
 				return response.end(JSON.stringify({success:true,data:token_data}));

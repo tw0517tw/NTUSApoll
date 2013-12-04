@@ -1,10 +1,14 @@
+<script>
+	var vid = "<%=vote._id%>";
+  	var the_vote = <%-JSON.stringify(vote)%>;
+</script>
 <script type="text/javascript" src="/js/admin_candidate.js"></script>
 <script type="text/javascript" src="/js/admin_vote.js"></script>
 <style type="text/css" src="/css/style.css"></style>
-<h1 class="pull-left"><%=vote.chiname%>&nbsp;</h1> 
-<h1 style="opacity: 0.8" class="pull-left"><%=vote.engname%></h1>
+<h1 id="vote_chiname" class="pull-left"><%=vote.chiname%>&nbsp;</h1> 
+<h1 id="vote_engname" style="opacity: 0.8" class="pull-left"><%=vote.engname%></h1>
 <div class="clearfix" style="clear:both;"></div>
-<h4 style="opacity:0.7; margin-top:-5px;"><%=vote.start_at%> ~ <%=vote.end_at%></h4>
+<h4 id="vote_time" style="opacity:0.7; margin-top:-5px;"><%=vote.start_at%> ~ <%=vote.end_at%></h4>
 <div class="btn btn-warning" onclick="showTokenForm()">產生亂碼</div>
 <div class="btn btn-success" onclick="showVoteForm(true)">編輯投票</div>
 <div class="btn btn-primary" onclick="showCandidateForm()">新增候選人</div>
@@ -13,8 +17,6 @@
 	
 </div>
 <script>
-	var vid = "<%=vote._id%>";
-  var the_vote = <%-JSON.stringify(vote)%>;
 	var candidates = new CandidateCollection([]);
 	var candidates_view = new CandidateCollectionView({
 	  collection : candidates,

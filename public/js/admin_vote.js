@@ -26,7 +26,7 @@ var VoteView = Backbone.View.extend({
   events:{'click .delete':'delete'},
   template: _.template(
   		"<%= chiname %> <%=engname%> \
-        <% if(start_at){ %><span class='label label-default'><%=start_at%> ~ <%=end_at%><% }else{ %> \
+        <% if(start_at){ %><span class='date label label-default'><%=start_at%> ~ <%=end_at%><% }else{ %> \
         <span class='label label-warning'>未設定投票日期<% } %></span>\
   		 <a href='/admin/vote/<%=_id%>' class='edit'>編輯</a> \
   		 <a href='#' class='delete'>刪除</a>"),
@@ -38,12 +38,16 @@ var VoteView = Backbone.View.extend({
     if(!attr['start_at']) attr['start_at'] = '';
     if(!attr['end_at']) attr['end_at'] = '';
   	$(this.el).html(this.template(attr));
+    if(new Date()>new Date(attr['start_at']) && new Date() < new Date(attr['end_at']))
+      $(this.el).find('.date.label').removeClass('label-default').addClass('label-info');
   	return this;
   },
   delete: function(){
-  	this.model.collection.remove(this.model);
-  	$(this.el).fadeOut();
-  	$.getJSON('/admin/class/remove?_id='+this.model.attributes._id);
+    if(confirm("確定刪除?")){
+    	this.model.collection.remove(this.model);
+    	$(this.el).fadeOut();
+    	$.getJSON('/admin/class/remove?_id='+this.model.attributes._id);
+    }
   }
 });
 
@@ -118,6 +122,9 @@ function editVote(){
   if($('#vote_modal #_id').val()!=""){
     var v = {};
     $.post('/admin/class/update',$('#vote_modal form').serialize());
+    $('#vote_chiname').text($('#vote_modal input[name=chiname]').val()+' ');
+    $('#vote_engname').text($('#vote_modal input[name=engname]').val());
+    $('#vote_time').text($('#vote_modal input[name=start_at]').val()+" ~ "+$('#vote_modal input[name=end_at]').val());
     $('#vote_modal').modal('hide');
   }else addVote();
 }

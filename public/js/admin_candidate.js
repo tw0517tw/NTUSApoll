@@ -48,7 +48,7 @@ var CandidateView = Backbone.View.extend({
   className: "vote_block",
   events:{'click .delete':'delete','click .edit':'edit'},
   template: _.template(
-  		"<b><%= no %> <%= cname %> <%=ename%></b> 得票數: <%=vote%>\
+  		"<b><%= no %> <%= cname %> <%=ename%></b> 得票數: <%=vote%> "+ (the_vote.agree=="on"?"反對數: <%=dis_vote%>":"") +"\
   		 <a href='#' class='edit'>編輯</a> \
   		 <a href='#' class='delete'>刪除</a>"+
        '<div class="vote_rate"><span class="vote_rate">得票率 <%=rate%>%</span><div class="progress-striped progress"> \
@@ -64,14 +64,16 @@ var CandidateView = Backbone.View.extend({
   },
   render: function(){
     console.log("Ready to render", this.model.attributes);
-    var candy = {no:this.model.attributes.no,ename:this.model.attributes.ename,vote:this.model.attributes.vote,cname:this.model.attributes.cname, rate: this.model.calc_rate()};
+    var candy = {no:this.model.attributes.no,ename:this.model.attributes.ename,vote:this.model.attributes.vote,dis_vote:this.model.attributes.dis_vote,cname:this.model.attributes.cname, rate: this.model.calc_rate()};
   	$(this.el).html(this.template(candy));
   	return this;
   },
   delete: function(){
-  	this.model.collection.remove(this.model);
-  	$(this.el).fadeOut();
-  	$.getJSON('/admin/candy/remove?_id='+this.model.attributes._id);
+    if(confirm("確定刪除?")){
+    	this.model.collection.remove(this.model);
+    	$(this.el).fadeOut();
+    	$.getJSON('/admin/candy/remove?_id='+this.model.attributes._id);
+    }
   },
   edit: function(){
     showCandidateForm(this.model);

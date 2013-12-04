@@ -14,10 +14,10 @@ function checkToken(){
       for(var i in data.candies){
         var c = data.candies[i];
         row_no.push('<span class="vno">'+c.no+'</span>');
-        row_img.push("<img width='150' src='/avatar/"+c._id+".jpg' />");
+        row_img.push("<img width='150' src='/avatar/"+c._id+".jpg' onerror='this.src=\"/img/default.jpg\"' />");
         row_name.push('<span class="cname">'+c['cname']+'</span>');
         row_ename.push('<span class="ename">'+c['ename']+'</span>');
-        if(data.vote_class.agree == "off"){
+        if(data.vote_class.agree != "on"){
           row_action.push('<br /><button class="btn btn-default" data-value="'+c._id+'" onclick="vote(this)">投</button>');
         }else{
           row_action.push('<br /><button class="btn btn-default agr" data-value="'+c._id+'" onclick="agree(this)">同意</button> <button class="btn btn-default disagr" data-value="'+c._id+'" onclick="disagree(this)">不同意</button>');
@@ -81,10 +81,14 @@ function disagree(btn){
 
 function checkVote(){
   var candies = [];
-  $(".btn[data-selected=true]").each(function(){
+  var dis_candies = [];
+  $(".agr.btn-primary").each(function(){
     candies.push($(this).attr('data-value'));
   });
-  $.getJSON('/do_vote?token='+$('#token').val()+'&candy[]='+candies.join('&candy[]=')+'&classid='+vote_data._id,voteCallback);
+  $(".disagr.btn-primary").each(function(){
+    dis_candies.push($(this).attr('data-value'));
+  });
+  $.getJSON('/do_vote?token='+$('#token').val()+'&candy[]='+candies.join('&candy[]=')+'&dis_candy[]='+dis_candies.join('&dis_candy[]=')+'&classid='+vote_data._id,voteCallback);
 }
 
 function voteCallback(resp){
@@ -103,6 +107,11 @@ function voteCallback(resp){
 function gotoProg(a){
   $('.container').hide();
   setTimeout(function(){$('#prog'+a).fadeIn('slow')},100);
+  if(a==1){
+    $('.alert').hide();
+  }else{
+    $('.alert').fadeIn();
+  }
 }
 
 gotoProg(1);
