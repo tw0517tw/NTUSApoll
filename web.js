@@ -34,9 +34,19 @@ var tokens;
 var KEY;
 var CANDY;
 
-mongodb.connect(mongoUri, function (err, ddb) {
-	db = ddb;
-	console.log("Database ready.", err);
+var Db = require('mongodb').Db;
+var Server = require('mongodb').Server;
+db = new Db('app20024734',new Server("paulo.mongohq.com",10058,{auto_reconnect: true,poolsize: 100}, {w:0, native_parser: false}) );
+db.open(function(err, db) {
+	db.authenticate('ntusa3','yxul4dj4au4a83',function(err,result){
+		if(err)
+			console.log(""+err);
+		console.log("shit");
+	});
+});
+
+//	db = ddb;
+//	console.log("Database ready.", err);
 	db.collection('contact', function(err, collection) {
 		tokens = collection;
 		//collection.remove();
@@ -61,7 +71,7 @@ mongodb.connect(mongoUri, function (err, ddb) {
 		//collection.remove();
 		//console.log("dbaa sc",err);
 	});
-});
+
 
 app.post('/admin/login',function(request,response){	// /admin?key = XXX&id=XXX
 	if(!util.ipIsAllowed(request,response)) return;
@@ -367,13 +377,13 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 		console.log(err,token_data);
 		if(err||!token_data) return response.end(util.errorObj('Token invalid or db failed'));
 		if(token_data['validate']==true){
-			token_data['validate'] = false;
-			tokens.save(token_data,function(err,doc){});
 			vote_class.findOne({_id:new ObjectID(token_data['classid'])},function(err,vote){
 				if(vote==null){
 				 console.log("Null vote", vote, token_data, err);
 				 return response.end(util.errorObj("Vote "+token_data['classid']+" not found"));	
-				}
+				}		
+				token_data['validate'] = false;
+				tokens.save(token_data,function(err,doc){});
 				console.log("Try Vote ", vote);
 				var time = new Date();
 				var end_at = new Date(vote['end_at']);
