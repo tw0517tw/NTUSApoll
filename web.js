@@ -281,7 +281,7 @@ app.get('/admin/class/:classid/tokens/gen',function(request,response){	//?classi
 			var rand = util.generateToken();
 			tokens_generated.push(rand);
 			tokens.insert({
-				classid: request.params.classid,	
+				classid: vote._id.toString(),	
 				token: rand,
 				validate: true
 			}, function(err, data) {
@@ -369,7 +369,7 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 			token_data['validate'] = false;
 			tokens.save(token_data,function(err,doc){});
 			vote_class.findOne({_id:new ObjectID(token_data['classid'])},function(err,vote){
-				if(!vote) return response.end(util.errorObj("Vote not found"));
+				if(!vote) return response.end(util.errorObj("Vote "+token_data['classid']+" not found"));
 				var time = new Date();
 				var end_at = new Date(vote['end_at']);
 				var start_at = new Date(vote['start_at']);
@@ -383,6 +383,7 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 					var c = candy[i];
 					CANDY.findOne({_id: new ObjectID(c) ,classid: classid},function(err,candy_data){
 						console.log("Update ", candy_data);
+						if(!candy_data) return;
 						if(candy_repeat[candy_data._id.toString()]) return; 
 						candy_repeat[candy_data._id.toString()] = true;
 						CANDY.update({_id: candy_data._id}, {'$inc':{vote:1}},function(err,doc){});

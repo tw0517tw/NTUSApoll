@@ -23,6 +23,7 @@ function init(scope){
 	})
 	app.get('/admin/vote/:id',function(req, res){
 		if(util.accessDenied(req,res)) return;
+		if(req.params.id.length<20) return res.end();
 		dbc['votes'].findOne({_id: new ObjectID(req.params.id)},function(err,doc){
 			res.render('admin.ejs',{section:"vote", vote: doc});
 		});

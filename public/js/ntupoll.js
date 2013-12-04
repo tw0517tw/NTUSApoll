@@ -82,12 +82,18 @@ function disagree(btn){
 function checkVote(){
   var candies = [];
   var dis_candies = [];
-  $(".agr.btn-primary").each(function(){
-    candies.push($(this).attr('data-value'));
-  });
-  $(".disagr.btn-primary").each(function(){
-    dis_candies.push($(this).attr('data-value'));
-  });
+  if(vote_data.agree=="on"){
+    $(".agr.btn-primary").each(function(){
+      candies.push($(this).attr('data-value'));
+    });
+    $(".disagr.btn-primary").each(function(){
+      dis_candies.push($(this).attr('data-value'));
+    });
+  }else{
+    $(".btn[data-selected=true]").each(function(){
+      candies.push($(this).attr('data-value'));
+    });
+  }
   $.getJSON('/do_vote?token='+$('#token').val()+'&candy[]='+candies.join('&candy[]=')+'&dis_candy[]='+dis_candies.join('&dis_candy[]=')+'&classid='+vote_data._id,voteCallback);
 }
 
