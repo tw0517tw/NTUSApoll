@@ -377,18 +377,20 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 				if(candy.length > parseInt(vote.votemax?vote.votemax:1) && vote.agree!="on") return response.end(util.errorObj("人數過多"));
 				if(dis_candy.length > 0 && vote.agree!="on") return response.end(util.errorObj("不開放不同意選項"));
 				var classid = vote._id.toString();
-				var candy_repeat = [];
+				var candy_repeat;
+				candy_repeat = [];
 				for(var i in candy){
-					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid: classid},function(err,candy_data){
-						console.log("Update "+ candy[i]);
-						if(candy_repeat[candy[i]]) return; 
-						candy_repeat[candy[i]] = true;
+					var c = candy[i];
+					CANDY.findOne({_id: new ObjectID(c) ,classid: classid},function(err,candy_data){
+						console.log("Update ", candy_data);
+						if(candy_repeat[candy_data._id.toString()]) return; 
+						candy_repeat[candy_data._id.toString()] = true;
 						CANDY.update({_id: candy_data._id}, {'$inc':{vote:1}},function(err,doc){});
 					});
 				}
 				for(var i in dis_candy){
 					CANDY.findOne({_id: new ObjectID(dis_candy[i]) ,classid:classid},function(err,candy_data){
-						console.log("Update "+ dis_candy[i]);
+						console.log("Update ", candy_data);
 						CANDY.update({_id: candy_data._id}, {'$inc':{dis_vote:1}},function(err,doc){});
 					});
 				}
