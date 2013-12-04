@@ -80,18 +80,23 @@
             <label for="engname">英文名稱</label><br>
             <input type="text" name="engname" id="engname"><br>
             <label for="start_at">起始日期</label><br>
-            <input type="text" name="start_at" id="start_at" /><br>
+            <input type="text" name="start_at" id="start_at" placeholder="YYYY-MM-DD hh:mm" /><br>
             <label for="end_at">結束日期</label><br>
-            <input type="text" name="end_at" id="end_at"/><br>
+            <input type="text" name="end_at" id="end_at" placeholder="YYYY-MM-DD hh:mm"/><br>
             <label for="votemax">複選張數</label><br>
-            <input type="number" name="votemax" id="votemax">
+            <input type="number" name="votemax" placeholder="1 為單選" id="votemax"><br>
+            <label for="agree">不同意選項</label><br>
+            <select name="agree" id="agree">
+              <option value="off">關閉</option>
+              <option value="on">開啟</option>
+            </select>
             <input type="hidden" name="_id" id="_id" />
           </form>
         </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
-        <button type="button" class="btn btn-primary" onclick="editVote()">儲存變更</button>
+        <button type="button" class="btn btn-primary" onclick="editVote()">儲存</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

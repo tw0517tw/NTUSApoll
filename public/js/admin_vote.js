@@ -100,9 +100,10 @@ function showVoteForm(edit_mode){
     for(var i in the_vote){
       $('#vote_modal input[name='+i+']').val(the_vote[i]);
     }
-    $('#multivote').attr('checked',the_vote.multivote);
+    $('#agree').val(the_vote['agree']);
   }else{
     $('#vote_modal input').each(function(){$(this).val('');});
+    $('#votemax').val('1');
   }
 }
 

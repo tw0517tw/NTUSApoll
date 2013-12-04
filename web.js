@@ -274,6 +274,8 @@ app.get('/admin/class/:classid/tokens/gen',function(request,response){	//?classi
 		if(!vote.serial) vote_class.update({_id:vote._id}, {'$set': {serial: 1}}, function(eerr,ddoc){});
 		else vote_class.update({_id:vote._id}, {'$inc': {serial: 1}}, function(eerr,ddoc){});
 		var insert_i = 0;
+		if(!vote.serial) vote.serial = 1;
+		else vote.serial++;
 		for(var i_token=0;i_token<random_number;i_token++){
 			var a = Math.PI;
 			var rand = util.generateToken();
@@ -329,10 +331,12 @@ app.get('/token/validate',function(request,response){
 		if(doc){
 			if(doc['validate']){
 				console.log("Validate " + request.query.token + ", ");
-				vote_class.findOne({_id:new ObjectID(doc['classid'])}, function(err, vote_doc){
-					if(vote_doc){
-						dbc['candidates'].find({classid: vote_doc._id.toString()}).sort(['no']).toArray(function(err,candies){
-							response.end(JSON.stringify({classid:doc['classid'],validate:doc['validate'],vote_class:vote_doc,doc:doc,candies: candies}));
+				vote_class.findOne({_id:new ObjectID(doc['classid'])}, function(err, vote){
+					if(vote){
+						var time = new Date();
+						if(new Date(vote['end_at']) < time || time < new Date(vote['start_at'])) return response.end(util.errorObj("投票時段錯誤"));
+						dbc['candidates'].find({classid: vote._id.toString()}).sort(['no']).toArray(function(err,candies){
+							response.end(JSON.stringify({classid:doc['classid'],validate:doc['validate'],vote_class:vote,doc:doc,candies: candies}));
 						});
 					}else{
 						response.end(JSON.stringify({error:"該序號無效",errno:2}));		
@@ -356,30 +360,36 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 
 	var token = request.query.token;
 	var candy = request.query.candy;
-	var classid = request.query.classid;
+	var dis_candy = result.query.dis_candy;
 
-	tokens.findOne({ token: token},function(err, data){
-		console.log(err,data);
-		if(err||!data) return response.end(util.errorObj('Token invalid or db failed'));
-		if(data['validate']==true){
-			data['validate'] = false;
-			tokens.save(data,function(err,doc){});
-			console.log(candy);
-			
-
-			vote_class.findOne({_id:new ObjectID(data['classid'])},function(err,vote){
+	tokens.findOne({ token: token},function(err, token_data){
+		console.log(err,token_data);
+		if(err||!token_data) return response.end(util.errorObj('Token invalid or db failed'));
+		if(token_data['validate']==true){
+			token_data['validate'] = false;
+			tokens.save(token_data,function(err,doc){});
+			vote_class.findOne({_id:new ObjectID(token_data['classid'])},function(err,vote){
+				if(!vote) return response.end(util.errorObj("Vote not found"));
 				var time = new Date();
-				var end_at = new Date(data['end_at']);
-				var start_at = new Date(data['start_at']);
-				
+				var end_at = new Date(vote['end_at']);
+				var start_at = new Date(vote['start_at']);
 				if(end_at < time || time < start_at) return response.end(util.errorObj("Too late"));
+				if(candy.length > parseInt(vote.votemax?vote.votemax:1)) return response.end(util.errorObj("人數過多"));
+				if(dis_candy.length > 0 && !vote.agree) return response.end(util.errorObj("不開放不同意選項"));
+				var classid = vote._id.toString();
 				for(var i in candy){
-					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid:classid},function(err,data){
+					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid: classid},function(err,token_data){
 						console.log("Update "+ candy[i]);
-						CANDY.update({_id: data._id}, {'$inc':{vote:1}},function(err,doc){});
+						CANDY.update({_id: token_data._id}, {'$inc':{vote:1}},function(err,doc){});
 					});
 				}
-				return response.end(JSON.stringify({success:true,data:data}));
+				for(var i in dis_candy){
+					CANDY.findOne({_id: new ObjectID(candy[i]) ,classid:classid},function(err,token_data){
+						console.log("Update "+ candy[i]);
+						CANDY.update({_id: token_data._id}, {'$inc':{vote:1}},function(err,doc){});
+					});
+				}
+				return response.end(JSON.stringify({success:true,data:token_data}));
 			});
 		}else{
 			response.end(util.errorObj("Voted"));
