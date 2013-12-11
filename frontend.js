@@ -4,7 +4,7 @@ function init(scope){
 	var dbc = scope['dbc'];
 	var ObjectID = scope.ObjectID;
 	var util = scope['util'];
-	console.log("yoyoyo initapp");
+	console.log("Frontend Initialized");
 	app.get('/',function(req, res){
 		if(!util.ipIsAllowed(req,res)) return;
 		res.render('poll.ejs',{});

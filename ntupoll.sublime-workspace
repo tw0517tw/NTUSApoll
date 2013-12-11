@@ -5,7 +5,35 @@
 		[
 			[
 				"re",
-				"request"
+				"require"
+			],
+			[
+				"mong",
+				"mongoUri"
+			],
+			[
+				"insert",
+				"insert_i"
+			],
+			[
+				"vote",
+				"vote_doc"
+			],
+			[
+				"vt",
+				"vote_doc"
+			],
+			[
+				"end",
+				"end_at"
+			],
+			[
+				"start",
+				"start_at"
+			],
+			[
+				"le",
+				"length"
 			],
 			[
 				"con",
@@ -18,10 +46,6 @@
 			[
 				"moment",
 				"moment"
-			],
-			[
-				"end",
-				"end_time"
 			],
 			[
 				"Ac",
@@ -76,10 +100,6 @@
 				"console"
 			],
 			[
-				"vote",
-				"vote_class"
-			],
-			[
 				"class",
 				"classname"
 			],
@@ -112,18 +132,10 @@
 			}
 		},
 		{
-			"file": "app.js",
-			"settings":
-			{
-				"buffer_size": 8713,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "util.js",
 			"settings":
 			{
-				"buffer_size": 375,
+				"buffer_size": 1734,
 				"line_ending": "Windows"
 			}
 		},
@@ -135,6 +147,22 @@
 			"settings":
 			{
 				"buffer_size": 405,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "web.js",
+			"settings":
+			{
+				"buffer_size": 14830,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "web_back.js",
+			"settings":
+			{
+				"buffer_size": 14264,
 				"line_ending": "Windows"
 			}
 		}
@@ -167,6 +195,8 @@
 	},
 	"file_history":
 	[
+		"/C/Users/廣和/Dropbox/帥哥專用/web.js",
+		"/C/Users/廣和/Dropbox/帥哥專用/web2.js",
 		"/C/Users/廣和/Dropbox/帥哥專用/app.js",
 		"/C/Users/廣和/Desktop/case/db.js",
 		"/C/Users/廣和/Dropbox/帥哥專用/spec.txt",
@@ -195,6 +225,28 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"found",
+			"Vote not",
+			"getDat",
+			"getDate\\",
+			"getDate",
+			"toArray",
+			"for",
+			"in",
+			"methodOverride",
+			"inc",
+			"$inc",
+			"CANDY",
+			"i_token",
+			"tokens",
+			"tokens_generated",
+			"insert_i",
+			"i",
+			"i_token",
+			"i",
+			"I",
+			"i",
+			"toArray",
 			"yoyo",
 			"yoyoy",
 			"yoyoyo",
@@ -223,7 +275,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -254,18 +306,18 @@
 				},
 				{
 					"buffer": 1,
-					"file": "app.js",
+					"file": "util.js",
 					"settings":
 					{
-						"buffer_size": 8713,
+						"buffer_size": 1734,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8596,
-								8596
+								0,
+								0
 							]
 						],
 						"settings":
@@ -274,39 +326,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3607.0,
+						"translation.y": 117.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "util.js",
-					"settings":
-					{
-						"buffer_size": 375,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								334,
-								334
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "spec.txt",
 					"settings":
 					{
@@ -327,6 +353,60 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "web.js",
+					"settings":
+					{
+						"buffer_size": 14830,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13997,
+								13997
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4919.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "web_back.js",
+					"settings":
+					{
+						"buffer_size": 14264,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								14264
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 632.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

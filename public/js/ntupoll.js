@@ -18,7 +18,7 @@ function checkToken(){
         row_name.push('<span class="cname">'+c['cname']+'</span>');
         row_ename.push('<span class="ename">'+c['ename']+'</span>');
         if(data.vote_class.agree != "on"){
-          row_action.push('<br /><button class="btn btn-default" data-value="'+c._id+'" onclick="vote(this)">投</button>');
+          row_action.push('<br /><button class="btn btn-default btn-voting" data-value="'+c._id+'" onclick="vote(this)">投</button>');
         }else{
           row_action.push('<br /><button class="btn btn-default agr" data-value="'+c._id+'" onclick="agree(this)">同意</button> <button class="btn btn-default disagr" data-value="'+c._id+'" onclick="disagree(this)">不同意</button>');
         }
@@ -35,16 +35,28 @@ function checkToken(){
 }
 
 function vote(btn){
-  if($(btn).attr('data-selected')!="true"){
-    if(voted < vote_data.votemax){
-      voted ++;
+  if(vote_data.votemax>1){
+    if($(btn).attr('data-selected')!="true"){
+      if(voted < vote_data.votemax){
+        voted ++;
+        $(btn).attr('data-selected', "true");
+        $(btn).removeClass('btn-default').addClass('btn-primary');
+      }
+    }else if($(btn).attr('data-selected')=="true"){
+      voted --;
+      $(btn).attr('data-selected', "false");
+      $(btn).addClass('btn-default').removeClass('btn-primary');
+    }
+  }else{
+    if($(btn).attr('data-selected')!="true"){
+      $('.btn-voting').attr('data-selected', "false");
+      $('.btn-voting').addClass('btn-default').removeClass('btn-primary');
       $(btn).attr('data-selected', "true");
       $(btn).removeClass('btn-default').addClass('btn-primary');
+    }else if($(btn).attr('data-selected')=="true"){
+      $(btn).attr('data-selected', "false");
+      $(btn).addClass('btn-default').removeClass('btn-primary');
     }
-  }else if($(btn).attr('data-selected')=="true"){
-    voted --;
-    $(btn).attr('data-selected', "false");
-    $(btn).addClass('btn-default').removeClass('btn-primary');
   }
 }
 
@@ -80,6 +92,7 @@ function disagree(btn){
 }
 
 function checkVote(){
+  if(!confirm("您確認投票無誤？")) return;
   var candies = [];
   var dis_candies = [];
   if(vote_data.agree=="on"){

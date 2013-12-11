@@ -16,6 +16,9 @@
 <div class="candidates">
 	
 </div>
+<div class="invalid">
+	廢票數: <%=vote.invalid?vote.invalid:0%>
+</div>
 <script>
 	var candidates = new CandidateCollection([]);
 	var candidates_view = new CandidateCollectionView({

@@ -41,7 +41,7 @@ db.open(function(err, db) {
 	db.authenticate('ntusa3','yxul4dj4au4a83',function(err,result){
 		if(err)
 			console.log(""+err);
-		console.log("shit");
+		console.log("Remote Database Connected");
 	});
 });
 
@@ -253,7 +253,7 @@ app.get('/admin/class/add',function(request,response){	//?engname = XXX & chinam
 			response.end(util.errorObj("already exists"));
 		}
 		else{
-			vote_class.insert({engname:classname,chiname:chiname,construct_time:addtime,start_at:start,end_at:end,votemax:votemax},function(err,data){
+			vote_class.insert({engname:classname,chiname:chiname,construct_time:addtime,start_at:start,end_at:end,votemax:votemax,invalid:0},function(err,data){
 				if(data){
 					console.log("inserted")
 					response.end(JSON.stringify(data));
@@ -403,6 +403,10 @@ app.get('/do_vote',function(request,response){	//?token=XXX&candy[]=_id&classid=
 						candy_repeat[candy_data._id.toString()] = true;
 						CANDY.update({_id: candy_data._id}, {'$inc':{vote:1}},function(err,doc){});
 					});
+				}
+				if(candy.length==0 && (vote.agree!="on" || dis_candy.length==0)){
+					vote_class.update({_id:new ObjectID(token_data['classid'])},{'$inc':{invalid:1}},function(err,doc){});
+					console.log('didnot vote');
 				}
 				for(var i in dis_candy){
 					CANDY.findOne({_id: new ObjectID(dis_candy[i]) ,classid:classid},function(err,candy_data){
